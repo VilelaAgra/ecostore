@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 
-interface cloudFunctions {
+interface CloudFuncions {
 
     @GET("getCustomToken")
     fun getCustomToken(@Query("access_token") accessToken: String) : Observable<ResponseBody>
