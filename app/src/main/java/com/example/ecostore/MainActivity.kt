@@ -8,20 +8,17 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.ecostore.Common.Common
-import com.example.ecostore.Model.UserModel
-import com.example.ecostore.Remote.CloudFuncions
-import com.example.ecostore.Remote.RetrofitCloudClient
+import com.example.ecostore.common.Common
+import com.example.ecostore.model.UserModel
+import com.example.ecostore.remote.CloudFuncions
+import com.example.ecostore.remote.RetrofitCloudClient
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import dmax.dialog.SpotsDialog
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private var providers:List<AuthUI.IdpConfig>? = null
 
     companion object {
-        private val APP_REQUEST_CODE = 7171
+        private const val APP_REQUEST_CODE = 7171
     }
 
     override fun onStart() {
@@ -60,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        providers = Arrays.asList<AuthUI.IdpConfig>(AuthUI.IdpConfig.PhoneBuilder().build())
+        providers = listOf(AuthUI.IdpConfig.PhoneBuilder().build())
         userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCE)
         firebaseAuth = FirebaseAuth.getInstance()
         dialog = SpotsDialog.Builder().setContext(this).setCancelable(false).build()
@@ -105,28 +102,28 @@ class MainActivity : AppCompatActivity() {
         val itemView = LayoutInflater.from(this@MainActivity)
             .inflate(R.layout.layout_register, null)
 
-        val edt_name = itemView.findViewById<EditText>(R.id.edt_name)
-        val edt_address = itemView.findViewById<EditText>(R.id.edt_address)
-        val edt_phone = itemView.findViewById<EditText>(R.id.edt_phone)
+        val nameEdt = itemView.findViewById<EditText>(R.id.edt_name)
+        val addressEdt = itemView.findViewById<EditText>(R.id.edt_address)
+        val phoneEdt = itemView.findViewById<EditText>(R.id.edt_phone)
 
-        edt_phone.setText(user.phoneNumber.toString())
+        phoneEdt.setText(user.phoneNumber.toString())
 
         builder.setView(itemView)
-        builder.setNegativeButton("CANCELAR") { dialogInterface, i -> dialogInterface.dismiss() }
-        builder.setNegativeButton("CADASTRAR") { dialogInterface, i ->
-            if (TextUtils.isDigitsOnly(edt_name.text.toString())){
+        builder.setNegativeButton("CANCELAR") { dialogInterface, _ -> dialogInterface.dismiss() }
+        builder.setNegativeButton("CADASTRAR") { dialogInterface, _ ->
+            if (TextUtils.isDigitsOnly(nameEdt.text.toString())){
                 Toast.makeText(this@MainActivity, "Por favor insira seu nome", Toast.LENGTH_SHORT).show()
                 return@setNegativeButton
-            } else if (TextUtils.isDigitsOnly(edt_address.toString())){
+            } else if (TextUtils.isDigitsOnly(addressEdt.toString())){
                 Toast.makeText(this@MainActivity, "Por favor insira seu endereço", Toast.LENGTH_SHORT).show()
                 return@setNegativeButton
             }
 
             val userModel = UserModel()
             userModel.uid = user.uid
-            userModel.name = edt_name.text.toString()
-            userModel.address = edt_address.text.toString()
-            userModel.phone = edt_phone.text.toString()
+            userModel.name = nameEdt.text.toString()
+            userModel.address = addressEdt.text.toString()
+            userModel.phone = phoneEdt.text.toString()
 
             userRef.child(user.uid)
                 .setValue(userModel)
@@ -146,6 +143,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun goToHomeActivity(userModel: UserModel?) {
         Common.currentUser = userModel
+        startActivity(Intent(this@MainActivity, HomeActivity::class.java))
+        finish()
     }
 
     private fun phoneLogin() {

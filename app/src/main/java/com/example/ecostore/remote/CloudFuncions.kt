@@ -1,4 +1,4 @@
-package com.example.ecostore.Remote
+package com.example.ecostore.remote
 
 import io.reactivex.Observable
 import okhttp3.ResponseBody

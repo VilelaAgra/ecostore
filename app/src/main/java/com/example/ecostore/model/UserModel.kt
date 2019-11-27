@@ -1,4 +1,4 @@
-package com.example.ecostore.Model
+package com.example.ecostore.model
 
 class UserModel {
     var uid:String?=null

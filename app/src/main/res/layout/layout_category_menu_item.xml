@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="100dp">
+
+	<ImageView
+		android:id="@+id/category_menu_item_image_view"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:scaleType="fitXY"/>
+
+	<View
+		android:background="@color/overlay_color"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+
+	<TextView
+		android:id="@+id/category_menu_item_text_view"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/best_deals"
+		android:gravity="center_horizontal|center_vertical"
+		android:layout_gravity="center_vertical"
+		android:textColor="@android:color/white"
+		android:fontFamily="@font/brandon_medium"
+		android:textSize="20sp"/>
+
+</FrameLayout>
