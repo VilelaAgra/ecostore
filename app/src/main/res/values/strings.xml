@@ -22,4 +22,33 @@
 	<string name="menu_product_details">Detalhes do Produto</string>
 	<string name="product_name">Product Name</string>
 	<string name="show_comment">Mostrar Comentários</string>
+
+
+	<string name="login">Login</string>
+	<string name="password">Senha</string>
+	<string name="password_hint">******</string>
+	<string name="eco_store">EcoStore</string>
+	<string name="register">Registrar</string>
+	<string name="forgot_your_login_info">Equeci minha senha</string>
+	<string name="sign_in">Entrar</string>
+	<string name="log_out">Sair</string>
+	<string name="remember_my_password">Lembrar minha senha</string>
+	<string name="user_name">Usuário</string>
+	<string name="do_register">Realize o seu cadastro</string>
+	<string name="create_account">Criar Conta</string>
+	<string name="first_name">Primeiro nome</string>
+	<string name="last_name">Sobrenome</string>
+	<string name="email">E-mail</string>
+	<string name="forgot_message">Não se preocupe. Insira seu endereço de email e nós enviaremos um link para resetar sua senha.</string>
+	<string name="submit">Enviar</string>
+	<string name="minPassword">A senha deve ter pelo menos 6 carácteres.</string>
+	<string name="required">Campo Obrigatório</string>
+	<string name="failAuth">Falha na autenticação.</string>
+	<string name="verifySendTo">Verificação do email enviada para</string>
+	<string name="verifySendFail">Falha ao enviar email de verificação</string>
+	<string name="createFail">Falha ao criar usuário, tente novamente.</string>
+	<string name="loginError">Erro ao fazer Login</string>
+	<string name="ad">ca-app-pub-8406004609473553/8839014408</string>
+
+
 </resources>
