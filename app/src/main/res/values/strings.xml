@@ -18,4 +18,8 @@
 
 	<string name="popular_categories">Categorias Populares</string>
 	<string name="best_deals">Ofertas</string>
+	<string name="products">Produtos</string>
+	<string name="menu_product_details">Detalhes do Produto</string>
+	<string name="product_name">Product Name</string>
+	<string name="show_comment">Mostrar Comentários</string>
 </resources>

@@ -9,8 +9,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ecostore.R
+import com.example.ecostore.callback.RecyclerItemClickListener
 import com.example.ecostore.common.Common
+import com.example.ecostore.eventbus.CategoryClick
 import com.example.ecostore.model.CategoryModel
+import org.greenrobot.eventbus.EventBus
 
 class MyCategoriesAdapter(
     internal var context: Context,
@@ -38,7 +41,16 @@ class MyCategoriesAdapter(
                 .load(categoriesList[position].image)
                 .into(it)
         }
+
         holder.categoryName?.text = categoriesList[position].name
+
+        //EventBus
+        holder.setListener(object : RecyclerItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                Common.categorySelected = categoriesList[position]
+                EventBus.getDefault().postSticky(CategoryClick(true, categoriesList[position]))
+            }
+        })
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -48,7 +60,7 @@ class MyCategoriesAdapter(
             if (categoriesList.size % 2 == 0) {
                 Common.DEFAULT_COLUMN_COUNT
             } else {
-                if (position > 1 && position == categoriesList.size-1){
+                if (position > 1 && position == categoriesList.size - 1) {
                     Common.FULL_WIDTH_COLUMN
                 } else {
                     Common.DEFAULT_COLUMN_COUNT
@@ -58,14 +70,30 @@ class MyCategoriesAdapter(
 
     }
 
-    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
 
         var categoryName: TextView? = null
         var categoryImage: ImageView? = null
 
+        internal var listener: RecyclerItemClickListener? = null
+
+        fun setListener(listener: RecyclerItemClickListener) {
+            this.listener = listener
+        }
+
         init {
             categoryName = itemView.findViewById(R.id.category_menu_item_text_view) as TextView
             categoryImage = itemView.findViewById(R.id.category_menu_item_image_view) as ImageView
+            itemView.setOnClickListener(this)
         }
+
+        override fun onClick(view: View?) {
+            view?.let { listener?.onItemClick(it, adapterPosition) }
+        }
+
+
     }
+
+
 }

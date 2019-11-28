@@ -6,8 +6,13 @@ class ProductModel {
     var image: String? = null
     var description: String? = null
     var price: Long = 0
-    var addon: List<AddonModel> = ArrayList<AddonModel>()
-    var sizemudarparaoutracoisa: List<SizeModel> = ArrayList<SizeModel>()
+    var key: String? = null
+    var addon: List<AddonModel> = ArrayList()
+    var sizemudarparaoutracoisa: List<SizeModel> = ArrayList()
+
+
+    var ratingValue: Double = 0.toDouble()
+    var ratingCount: Long = 0.toLong()
 
 
 }

@@ -18,14 +18,13 @@ import com.example.ecostore.adapter.MyCategoriesAdapter
 import com.example.ecostore.common.Common
 import com.example.ecostore.common.SpacesItemDecoration
 import dmax.dialog.SpotsDialog
-import kotlinx.android.synthetic.main.fragment_menu_categories.*
 
 class MenuFragment : Fragment() {
 
     private lateinit var menuViewModel: MenuViewModel
     private lateinit var dialog: AlertDialog
     private lateinit var layoutAnimationController: LayoutAnimationController
-    private var adapater: MyCategoriesAdapter? = null
+    private var adapter: MyCategoriesAdapter? = null
     private var recyclerMenuCategory: RecyclerView? = null
 
     override fun onCreateView(
@@ -45,8 +44,8 @@ class MenuFragment : Fragment() {
 
         menuViewModel.getCategoryList().observe(this, Observer {
             dialog.dismiss()
-            adapater = MyCategoriesAdapter(context!!, it)
-            recyclerMenuCategory?.adapter = adapater
+            adapter = MyCategoriesAdapter(context!!, it)
+            recyclerMenuCategory?.adapter = adapter
             recyclerMenuCategory?.layoutAnimation = layoutAnimationController
         })
 
@@ -67,8 +66,8 @@ class MenuFragment : Fragment() {
         layoutManager.orientation = RecyclerView.VERTICAL
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return if (adapater != null) {
-                    when (adapater?.getItemViewType(position)) {
+                return if (adapter != null) {
+                    when (adapter?.getItemViewType(position)) {
                         Common.DEFAULT_COLUMN_COUNT -> 1
                         Common.FULL_WIDTH_COLUMN -> 2
                         else -> -1
