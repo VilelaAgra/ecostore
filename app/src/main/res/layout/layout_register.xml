@@ -24,9 +24,10 @@
 
 		<EditText
 			android:id="@+id/edt_address"
-			android:hint="Endereço"
+			android:hint="CEP"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"/>
+			android:layout_height="wrap_content"
+			android:inputType="number"/>
 
 	</com.google.android.material.textfield.TextInputLayout>
 
@@ -48,8 +49,8 @@
 		android:layout_height="wrap_content">
 
 		<EditText
-			android:id="@+id/edt_name"
-			android:hint="Nome"
+			android:id="@+id/edt_email"
+			android:hint="Email"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"/>
 

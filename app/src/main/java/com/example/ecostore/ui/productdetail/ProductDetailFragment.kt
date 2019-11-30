@@ -14,12 +14,23 @@ import com.bumptech.glide.Glide
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
 import com.example.ecostore.R
 import com.example.ecostore.common.Common
+import com.example.ecostore.database.CartDataBase
+import com.example.ecostore.database.CartDataSource
+import com.example.ecostore.database.CartItem
+import com.example.ecostore.database.LocalCartDataSource
+import com.example.ecostore.eventbus.CountCartEvent
 import com.example.ecostore.model.CommentModel
 import com.example.ecostore.model.ProductModel
 import com.example.ecostore.ui.comment.CommentFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.*
 import dmax.dialog.SpotsDialog
+import io.reactivex.SingleObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import org.greenrobot.eventbus.EventBus
 
 class ProductDetailFragment : Fragment() {
 
@@ -36,6 +47,8 @@ class ProductDetailFragment : Fragment() {
     private var buttonShowComment: Button? = null
     private var waitingDialog: android.app.AlertDialog? = null
 
+    private val compositeDisposable = CompositeDisposable()
+    private lateinit var cartDataSource : CartDataSource
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -142,6 +155,8 @@ class ProductDetailFragment : Fragment() {
 
     private fun initViews(root: View?) {
 
+        cartDataSource = LocalCartDataSource(CartDataBase.getInstance(context!!).cartDAO())
+
         waitingDialog = SpotsDialog.Builder().setContext(context!!).setCancelable(false).build()
 
         nameProduct = root?.findViewById(R.id.product_details_text_view_product_name) as TextView
@@ -165,8 +180,113 @@ class ProductDetailFragment : Fragment() {
             commentFragment.show(activity!!.supportFragmentManager, "CommentFragment")
         }
 
-    }
+        buttonCart?.setOnClickListener {
+            val cartItem = CartItem()
 
+            cartItem.uid = Common.currentUser?.uid
+            cartItem.userPhone = Common.currentUser?.phone
+
+            cartItem.productId = Common.productSelected?.id!!
+            cartItem.productName = Common.productSelected?.name
+            cartItem.productImage = Common.productSelected?.image
+            cartItem.productPrice = Common.productSelected?.price!!.toDouble()
+            cartItem.productQuantity = buttonNumber?.number!!.toInt()
+
+
+
+            cartDataSource.getItemWithAllOptionsInCart(
+                Common.currentUser?.uid!!,
+                cartItem.productId
+            )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : SingleObserver<CartItem> {
+                    override fun onSuccess(cartItemFromDB: CartItem) {
+                        if (cartItemFromDB.equals(cartItem)){
+                            cartItemFromDB.productImage = cartItem.productImage
+                            cartItemFromDB.productPrice = cartItem.productPrice
+                            cartItemFromDB.productName = cartItem.productName
+                            cartItemFromDB.productQuantity = cartItem.productQuantity + cartItem.productQuantity
+
+                            cartDataSource.updateCart(cartItemFromDB)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(object : SingleObserver<Int>{
+                                    override fun onSuccess(t: Int) {
+                                        Toast.makeText(context, "Carrinho atualizado", Toast.LENGTH_SHORT).show()
+                                        EventBus.getDefault().postSticky(CountCartEvent(true))
+                                    }
+
+                                    override fun onSubscribe(d: Disposable) {
+
+                                    }
+
+                                    override fun onError(e: Throwable) {
+                                        Toast.makeText(context, "[UPDATE CART]"+e.message, Toast.LENGTH_SHORT).show()
+
+                                    }
+
+                                })
+                        } else {
+                            compositeDisposable.add(cartDataSource.insertOrReplaceAll(cartItem)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    Toast.makeText(
+                                        context,
+                                        "Adicionado ao Carrinho",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    EventBus.getDefault().postSticky(CountCartEvent(true))
+                                }, {
+                                    Toast.makeText(
+                                        context,
+                                        "[INSERT CART]" + it.message,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                })
+                            )
+                        }
+                    }
+
+                    override fun onSubscribe(d: Disposable) {
+
+                    }
+
+                    override fun onError(e: Throwable) {
+                        if (e.message!!.contains("empty")) {
+                            compositeDisposable.add(cartDataSource.insertOrReplaceAll(cartItem)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    Toast.makeText(
+                                        context,
+                                        "Adicionado ao Carrinho",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    EventBus.getDefault().postSticky(CountCartEvent(true))
+                                }, {
+                                    Toast.makeText(
+                                        context,
+                                        "[INSERT CART]" + it.message,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                })
+                            )
+                        } else {
+                            Toast.makeText(context, "[CART ERRO]" + e.message, Toast.LENGTH_SHORT)
+                                .show()
+
+                        }
+                    }
+
+                })
+
+        }
+    }
     private fun showDialogRating() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Avaliando Produto")

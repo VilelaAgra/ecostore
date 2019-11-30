@@ -14,6 +14,8 @@ import com.example.ecostore.remote.CloudFuncions
 import com.example.ecostore.remote.RetrofitCloudClient
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.github.rtoshiro.util.format.SimpleMaskFormatter
+import com.github.rtoshiro.util.format.text.MaskTextWatcher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -105,6 +107,18 @@ class MainActivity : AppCompatActivity() {
         val nameEdt = itemView.findViewById<EditText>(R.id.edt_name)
         val addressEdt = itemView.findViewById<EditText>(R.id.edt_address)
         val phoneEdt = itemView.findViewById<EditText>(R.id.edt_phone)
+        val edtEmail = itemView.findViewById<EditText>(R.id.edt_email)
+
+
+        //MASKS
+        val smfPhone = SimpleMaskFormatter("(NN)NNNNN-NNNN")
+        val smfCEP = SimpleMaskFormatter("NN.NNN-NNNN")
+
+        val smwPhone = MaskTextWatcher(phoneEdt, smfPhone)
+        val smwCEP = MaskTextWatcher(addressEdt, smfCEP)
+
+        phoneEdt.addTextChangedListener(smwPhone)
+        addressEdt.addTextChangedListener(smwCEP)
 
         phoneEdt.setText(user.phoneNumber.toString())
 
@@ -124,6 +138,7 @@ class MainActivity : AppCompatActivity() {
             userModel.name = nameEdt.text.toString()
             userModel.address = addressEdt.text.toString()
             userModel.phone = phoneEdt.text.toString()
+            userModel.email = edtEmail.text.toString()
 
             userRef.child(user.uid)
                 .setValue(userModel)

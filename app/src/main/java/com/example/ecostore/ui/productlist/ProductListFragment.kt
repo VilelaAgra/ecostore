@@ -23,6 +23,12 @@ class ProductListFragment : Fragment() {
     var adapter: MyProductListAdapter?                        = null
     var recyclerProductList: RecyclerView?                    = null
 
+
+    override fun onStop() {
+        if (adapter != null)
+            adapter?.onStop()
+        super.onStop()
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
